@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE IMPOSSIBLE TEST 3.0</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#020203;
+    --panel:#09090d;
+    --panel2:#0e0e14;
+    --line:#24242d;
+    --text:#eeeeef;
+    --muted:#777781;
+    --red:#ff1744;
+    --darkred:#69091d;
+    --green:#55ffad;
+    --blue:#5865ff;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+}
+
+body{
+    overflow:hidden;
+    background:#000;
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+/* =========================================
+   BACKGROUND
+========================================= */
+
+#background{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #15131a 0%,
+            #08080c 38%,
+            #000 82%
+        );
+    transition:filter .5s;
+}
+
+.grid{
+    position:absolute;
+    width:160%;
+    height:160%;
+    left:-30%;
+    top:45%;
+    background-image:
+        linear-gradient(rgba(255,0,40,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,0,40,.025) 1px,transparent 1px);
+    background-size:55px 55px;
+    transform:
+        perspective(500px)
+        rotateX(65deg);
+    animation:gridMove 10s linear infinite;
+}
+
+@keyframes gridMove{
+    from{
+        transform:
+            perspective(500px)
+            rotateX(65deg)
+            translateY(0);
+    }
+
+    to{
+        transform:
+            perspective(500px)
+            rotateX(65deg)
+            translateY(55px);
+    }
+}
+
+.vignette{
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 25%,
+            rgba(0,0,0,.45) 60%,
+            #000 100%
+        );
+    pointer-events:none;
+    z-index:20;
+}
+
+.scanlines{
+    position:absolute;
+    inset:0;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 3px,
+            rgba(255,255,255,.018) 4px
+        );
+    pointer-events:none;
+    z-index:30;
+}
+
+.noise{
+    position:absolute;
+    inset:-50%;
+    opacity:.06;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:noise .15s steps(2) infinite;
+    z-index:40;
+    pointer-events:none;
+}
+
+@keyframes noise{
+    0%{transform:translate(0,0)}
+    25%{transform:translate(2%,1%)}
+    50%{transform:translate(-1%,-2%)}
+    75%{transform:translate(2%,-1%)}
+    100%{transform:translate(0,0)}
+}
+
+.redGlow{
+    position:absolute;
+    width:600px;
+    height:600px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,0,40,.07),
+            transparent 70%
+        );
+    animation:redPulse 5s infinite;
+}
+
+@keyframes redPulse{
+    0%,100%{opacity:.3}
+    50%{opacity:1}
+}
+
+
+/* =========================================
+   EYES
+========================================= */
+
+.eye{
+    position:absolute;
+    width:30px;
+    height:14px;
+    opacity:0;
+    transition:opacity 1s;
+    z-index:5;
+}
+
+.eye::before,
+.eye::after{
+    content:"";
+    position:absolute;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#ff183f;
+    box-shadow:
+        0 0 7px #ff173d,
+        0 0 20px rgba(255,0,30,.8);
+}
+
+.eye::before{
+    left:0;
+}
+
+.eye::after{
+    right:0;
+}
+
+.eye.show{
+    opacity:.65;
+}
+
+.eye1{
+    left:8%;
+    top:25%;
+}
+
+.eye2{
+    right:11%;
+    top:31%;
+}
+
+.eye3{
+    left:17%;
+    bottom:19%;
+}
+
+.eye4{
+    right:21%;
+    bottom:22%;
+}
+
+.eye5{
+    left:49%;
+    top:13%;
+}
+
+.eye6{
+    right:4%;
+    bottom:12%;
+}
+
+
+/* =========================================
+   SCREEN
+========================================= */
+
+.screen{
+    position:relative;
+    z-index:50;
+    width:100%;
+    height:100%;
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.screen.active{
+    display:flex;
+}
+
+
+/* =========================================
+   LANGUAGE
+========================================= */
+
+.languageBox{
+    position:fixed;
+    top:20px;
+    right:20px;
+    z-index:100;
+}
+
+.languageButton{
+    min-height:40px;
+    padding:9px 15px;
+    font-size:10px;
+    background:#09090e;
+}
+
+
+/* =========================================
+   INTRO
+========================================= */
+
+.intro{
+    width:min(900px,92%);
+    text-align:center;
+}
+
+.system{
+    color:var(--red);
+    font-size:10px;
+    letter-spacing:6px;
+    margin-bottom:25px;
+    animation:flicker 3s infinite;
+}
+
+@keyframes flicker{
+    0%,18%,20%,22%,100%{opacity:1}
+    19%,21%{opacity:.15}
+}
+
+.intro h1{
+    font-size:clamp(44px,8vw,105px);
+    line-height:.86;
+    letter-spacing:9px;
+    text-shadow:
+        3px 0 #ff1744,
+        -3px 0 #303bff,
+        0 0 35px rgba(255,0,40,.3);
+    animation:titleGlitch 5s infinite;
+}
+
+@keyframes titleGlitch{
+    0%,91%,100%{
+        transform:none;
+    }
+
+    92%{
+        transform:translateX(6px);
+    }
+
+    93%{
+        transform:translateX(-6px);
+    }
+
+    94%{
+        transform:none;
+    }
+}
+
+.subtitle{
+    margin-top:25px;
+    color:var(--muted);
+    font-size:11px;
+    letter-spacing:3px;
+}
+
+.entry{
+    margin:45px auto 0;
+    width:min(620px,100%);
+    padding:32px;
+    background:rgba(6,6,10,.9);
+    border:1px solid var(--line);
+    box-shadow:
+        0 0 70px rgba(0,0,0,.8),
+        inset 0 0 40px rgba(255,0,40,.025);
+}
+
+.entryQuestion{
+    font-size:17px;
+    letter-spacing:4px;
+    margin-bottom:25px;
+}
+
+.buttons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+}
+
+button{
+    border:1px solid var(--line);
+    background:#0c0c12;
+    color:#ddd;
+    min-height:52px;
+    padding:12px 25px;
+    font-size:11px;
+    letter-spacing:2px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+button:hover{
+    border-color:var(--red);
+    background:#151017;
+    box-shadow:0 0 20px rgba(255,0,40,.2);
+    transform:translateY(-2px);
+}
+
+.primary{
+    background:#68091d;
+    border-color:#a6102e;
+}
+
+.primary:hover{
+    background:#95102c;
+}
+
+
+/* =========================================
+   QUIZ
+========================================= */
+
+#quizScreen{
+    padding:20px;
+}
+
+.quiz{
+    width:min(920px,94%);
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-bottom:15px;
+    border-bottom:1px solid #1c1c24;
+}
+
+.logo{
+    color:var(--red);
+    font-size:10px;
+    letter-spacing:4px;
+}
+
+.stats{
+    display:flex;
+    gap:22px;
+    color:#686873;
+    font-size:10px;
+    letter-spacing:1px;
+}
+
+.stats span{
+    color:white;
+}
+
+.progressOuter{
+    height:3px;
+    margin-top:20px;
+    background:#111117;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    box-shadow:0 0 15px var(--red);
+    transition:.4s;
+}
+
+.timerOuter{
+    margin-top:18px;
+    height:4px;
+    background:#111117;
+}
+
+.timerBar{
+    height:100%;
+    width:100%;
+    background:var(--red);
+    transition:width 1s linear;
+}
+
+.timerText{
+    text-align:right;
+    margin-top:6px;
+    color:#666672;
+    font-size:9px;
+    letter-spacing:2px;
+}
+
+.questionArea{
+    margin-top:45px;
+}
+
+.questionNumber{
+    color:var(--red);
+    font-size:10px;
+    letter-spacing:5px;
+    margin-bottom:18px;
+}
+
+.question{
+    min-height:135px;
+    font-size:clamp(23px,4vw,42px);
+    line-height:1.2;
+    font-weight:bold;
+}
+
+.answers{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-top:25px;
+}
+
+.answer{
+    min-height:65px;
+    text-align:left;
+}
+
+.feedback{
+    min-height:35px;
+    margin-top:18px;
+    font-size:11px;
+    letter-spacing:2px;
+}
+
+.correct{
+    color:var(--green);
+}
+
+.wrong{
+    color:#ff3157;
+}
+
+.shake{
+    animation:shake .35s;
+}
+
+@keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-10px)}
+    40%{transform:translateX(10px)}
+    60%{transform:translateX(-7px)}
+    80%{transform:translateX(7px)}
+}
+
+
+/* =========================================
+   HORROR EVENTS
+========================================= */
+
+.flash{
+    position:fixed;
+    inset:0;
+    background:rgba(255,0,40,.28);
+    opacity:0;
+    pointer-events:none;
+    z-index:200;
+}
+
+.flash.active{
+    animation:flash .4s;
+}
+
+@keyframes flash{
+    0%{opacity:0}
+    20%{opacity:1}
+    100%{opacity:0}
+}
+
+.whisper{
+    position:fixed;
+    left:50%;
+    bottom:8%;
+    transform:translateX(-50%);
+    color:#777780;
+    font-size:10px;
+    letter-spacing:4px;
+    opacity:0;
+    white-space:nowrap;
+    z-index:100;
+    pointer-events:none;
+}
+
+.whisper.show{
+    animation:whisper 3s;
+}
+
+@keyframes whisper{
+    0%{
+        opacity:0;
+        filter:blur(10px);
+    }
+
+    25%{
+        opacity:.9;
+        filter:blur(0);
+    }
+
+    70%{
+        opacity:.9;
+    }
+
+    100%{
+        opacity:0;
+        filter:blur(10px);
+    }
+}
+
+
+/* =========================================
+   RESULT
+========================================= */
+
+.result{
+    width:min(720px,92%);
+    text-align:center;
+}
+
+.resultSymbol{
+    font-size:75px;
+    color:var(--red);
+    text-shadow:0 0 30px var(--red);
+}
+
+.result h1{
+    margin-top:15px;
+    font-size:clamp(40px,8vw,85px);
+    letter-spacing:7px;
+}
+
+.resultText{
+    margin:20px auto;
+    max-width:600px;
+    color:#777782;
+    line-height:1.8;
+}
+
+.scoreBox{
+    width:min(450px,100%);
+    margin:30px auto;
+    padding:23px;
+    border:1px solid var(--line);
+    background:#08080d;
+}
+
+.scoreLabel{
+    color:#666672;
+    font-size:9px;
+    letter-spacing:4px;
+}
+
+.finalScore{
+    color:var(--red);
+    font-size:45px;
+    font-weight:bold;
+    margin-top:7px;
+}
+
+.secret{
+    min-height:20px;
+    margin:20px auto;
+    color:var(--red);
+    font-size:10px;
+    letter-spacing:3px;
+}
+
+
+/* =========================================
+   LANGUAGE RTL
+========================================= */
+
+body.rtl{
+    direction:rtl;
+}
+
+body.rtl .stats,
+body.rtl .topbar{
+    direction:rtl;
+}
+
+body.rtl .question{
+    line-height:1.5;
+}
+
+body.rtl .answer{
+    text-align:right;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:650px){
+
+    .answers{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        gap:9px;
+        font-size:9px;
+    }
+
+    .intro h1{
+        letter-spacing:4px;
+    }
+
+    .buttons{
+        flex-direction:column;
+    }
+
+    .buttons button{
+        width:100%;
+    }
+
+    .questionArea{
+        margin-top:30px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div id="background">
+
+    <div class="redGlow"></div>
+    <div class="grid"></div>
+
+    <div class="eye eye1"></div>
+    <div class="eye eye2"></div>
+    <div class="eye eye3"></div>
+    <div class="eye eye4"></div>
+    <div class="eye eye5"></div>
+    <div class="eye eye6"></div>
+
+    <div class="vignette"></div>
+    <div class="scanlines"></div>
+    <div class="noise"></div>
+
+</div>
+
+<div class="flash" id="flash"></div>
+
+<div class="whisper" id="whisper"></div>
+
+
+<!-- LANGUAGE -->
+
+<div class="languageBox">
+
+    <button
+        class="languageButton"
+        onclick="toggleLanguage()"
+        id="languageButton">
+        LANGUAGE: EN
+    </button>
+
+</div>
+
+
+<!-- =========================================
+     INTRO
+========================================= -->
+
+<section
+    id="introScreen"
+    class="screen active">
+
+    <div class="intro">
+
+        <div
+            class="system"
+            id="introSystem">
+            UNKNOWN TEST PROTOCOL
+        </div>
+
+        <h1>
+            THE<br>
+            IMPOSSIBLE TEST
+        </h1>
+
+        <div
+            class="subtitle"
+            id="introSubtitle">
+            THERE IS ALWAYS A CORRECT ANSWER.
+        </div>
+
+        <div class="entry">
+
+            <div
+                class="entryQuestion"
+                id="entryQuestion">
+                DO YOU WANT TO ENTER?
+            </div>
+
+            <div class="buttons">
+
+                <button
+                    class="primary"
+                    onclick="startGame()"
+                    id="yesButton">
+                    YES
+                </button>
+
+                <button
+                    onclick="tryExit()"
+                    id="noButton">
+                    NO
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     QUIZ
+========================================= -->
+
+<section
+    id="quizScreen"
+    class="screen">
+
+    <div class="quiz">
+
+        <div class="topbar">
+
+            <div
+                class="logo"
+                id="logo">
+                IMPOSSIBLE_PROTOCOL // 03
+            </div>
+
+            <div class="stats">
+
+                <div>
+                    <span id="scoreLabel">
+                        SCORE:
+                    </span>
+
+                    <span id="score">
+                        0
+                    </span>
+                </div>
+
+                <div>
+                    <span id="livesLabel">
+                        LIVES:
+                    </span>
+
+                    <span id="lives">
+                        3
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="progressOuter">
+
+            <div
+                class="progress"
+                id="progress">
+            </div>
+
+        </div>
+
+        <div class="timerOuter">
+
+            <div
+                class="timerBar"
+                id="timerBar">
+            </div>
+
+        </div>
+
+        <div
+            class="timerText"
+            id="timerText">
+            TIME: 15
+        </div>
+
+        <div class="questionArea">
+
+            <div
+                class="questionNumber"
+                id="questionNumber">
+                QUESTION 01
+            </div>
+
+            <div
+                class="question"
+                id="question">
+                Loading...
+            </div>
+
+            <div
+                class="answers"
+                id="answers">
+            </div>
+
+            <div
+                class="feedback"
+                id="feedback">
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     RESULT
+========================================= -->
+
+<section
+    id="resultScreen"
+    class="screen">
+
+    <div class="result">
+
+        <div class="resultSymbol">
+            ◈
+        </div>
+
+        <h1 id="resultTitle">
+            TEST COMPLETE
+        </h1>
+
+        <div
+            class="resultText"
+            id="resultText">
+        </div>
+
+        <div class="scoreBox">
+
+            <div
+                class="scoreLabel"
+                id="finalScoreLabel">
+                FINAL SCORE
+            </div>
+
+            <div
+                class="finalScore"
+                id="finalScore">
+                0
+            </div>
+
+        </div>
+
+        <div
+            class="secret"
+            id="secret">
+        </div>
+
+        <button
+            class="primary"
+            onclick="restart()"
+            id="restartButton">
+            ENTER AGAIN
+        </button>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =====================================================
+   LANGUAGE
+===================================================== */
+
+let language="en";
+
+const translations={
+
+    en:{
+        language:"LANGUAGE: EN",
+        system:"UNKNOWN TEST PROTOCOL",
+        subtitle:"THERE IS ALWAYS A CORRECT ANSWER.",
+        enter:"DO YOU WANT TO ENTER?",
+        yes:"YES",
+        no:"NO",
+        score:"SCORE:",
+        lives:"LIVES:",
+        time:"TIME:",
+        question:"QUESTION",
+        correct:"CORRECT",
+        wrong:"WRONG ANSWER",
+        expired:"TIME EXPIRED",
+        noExit:"THERE IS NO EXIT.",
+        again:"ENTER AGAIN",
+        finalScore:"FINAL SCORE",
+
+        complete:"TEST COMPLETE",
+        escaped:"YOU ESCAPED",
+        survivor:"SURVIVOR",
+        lost:"THE TEST WON",
+
+        high:
+            "You solved the nightmare test with an extremely high score.",
+
+        medium:
+            "You survived the test. The system has recorded your answers.",
+
+        low:
+            "You reached the end, but the test was not impressed.",
+
+        secret1:
+            "SECRET STATUS: THE SYSTEM RECOGNIZES YOU.",
+
+        secret2:
+            "STATUS: OBSERVATION COMPLETE.",
+
+        secret3:
+            "THE TEST REMEMBERS YOUR MISTAKES.",
+
+        whispers:[
+            "YOU ARE STILL HERE.",
+            "LOOK CAREFULLY.",
+            "DO NOT RUSH.",
+            "SOMETHING IS WATCHING.",
+            "THAT WAS THE EASY ONE.",
+            "YOU MISSED SOMETHING.",
+            "KEEP GOING.",
+            "THE TEST REMEMBERS.",
+            "ARE YOU SURE?",
+            "DO NOT LOOK AWAY."
+        ]
+    },
+
+    fa:{
+        language:"زبان: فارسی",
+        system:"پروتکل آزمون ناشناخته",
+        subtitle:"همیشه یک جواب درست وجود دارد.",
+        enter:"آیا می‌خواهی وارد شوی؟",
+        yes:"بله",
+        no:"خیر",
+        score:"امتیاز:",
+        lives:"جان:",
+        time:"زمان:",
+        question:"سؤال",
+        correct:"پاسخ درست",
+        wrong:"پاسخ اشتباه",
+        expired:"زمان تمام شد",
+        noExit:"راه خروجی وجود ندارد.",
+        again:"ورود دوباره",
+        finalScore:"امتیاز نهایی",
+
+        complete:"آزمون تمام شد",
+        escaped:"فرار کردی",
+        survivor:"بازمانده",
+        lost:"آزمون برنده شد",
+
+        high:
+            "تو آزمون کابوس را با امتیاز بسیار بالایی تمام کردی.",
+
+        medium:
+            "از آزمون جان سالم به در بردی. سیستم پاسخ‌هایت را ثبت کرد.",
+
+        low:
+            "به پایان رسیدی، اما آزمون چندان تحت تأثیر قرار نگرفت.",
+
+        secret1:
+            "وضعیت مخفی: سیستم تو را شناسایی کرده است.",
+
+        secret2:
+            "وضعیت: مشاهده کامل شد.",
+
+        secret3:
+            "آزمون اشتباهاتت را به خاطر می‌سپارد.",
+
+        whispers:[
+            "تو هنوز اینجایی.",
+            "با دقت نگاه کن.",
+            "عجله نکن.",
+            "یک چیزی دارد نگاهت می‌کند.",
+            "آن سؤال آسان بود.",
+            "یک چیز را ندیدی.",
+            "ادامه بده.",
+            "آزمون تو را به خاطر می‌سپارد.",
+            "مطمئنی؟",
+            "نگاهت را برنگردان."
+        ]
+    }
+
+};
+
+
+/* =====================================================
+   QUESTIONS
+===================================================== */
+
+const questions={
+
+en:[
+
+{
+q:"You hear three quiet knocks behind you. What should you do?",
+a:[
+"Turn around immediately",
+"Stay still and listen",
+"Shout at the door",
+"Open the door"
+],
+c:1
+},
+
+{
+q:"The hallway light turns off while you are looking at it. What is the safest choice?",
+a:[
+"Walk into the darkness",
+"Stay where you are and wait",
+"Run toward the darkness",
+"Turn off every light"
+],
+c:1
+},
+
+{
+q:"A message appears on the screen: \"DO NOT LOOK BEHIND YOU.\" What should you do?",
+a:[
+"Look behind you",
+"Close the browser",
+"Keep your attention on the test",
+"Turn around slowly"
+],
+c:2
+},
+
+{
+q:"You hear footsteps, but nobody is visible. What is the most reasonable response?",
+a:[
+"Follow the footsteps",
+"Stay calm and remain where you are",
+"Run into another room",
+"Call out loudly"
+],
+c:1
+},
+
+{
+q:"A door that was closed is now slightly open. What should you do?",
+a:[
+"Enter immediately",
+"Stay away and keep the door closed",
+"Run toward it",
+"Turn off the lights"
+],
+c:1
+},
+
+{
+q:"The same clock shows a different time every time you look away. What should you trust?",
+a:[
+"The changing clock",
+"Your imagination",
+"The last time you remember",
+"None of the changing readings"
+],
+c:3
+},
+
+{
+q:"You see a shadow move across the wall, but nothing is there. What should you do?",
+a:[
+"Chase it",
+"Stay calm and check your surroundings safely",
+"Follow the shadow",
+"Turn off the screen"
+],
+c:1
+},
+
+{
+q:"The screen suddenly becomes completely silent. What does silence prove?",
+a:[
+"Someone is nearby",
+"Something is behind you",
+"Nothing by itself",
+"Something has entered the room"
+],
+c:2
+},
+
+{
+q:"A strange voice asks you to open an unknown file. What should you do?",
+a:[
+"Open it",
+"Download it",
+"Ignore it",
+"Send it to someone"
+],
+c:2
+},
+
+{
+q:"You notice that one answer button is glowing red. What should you assume?",
+a:[
+"It must be correct",
+"It must be safe",
+"Nothing based only on its color",
+"It knows the answer"
+],
+c:2
+},
+
+{
+q:"The screen says: \"I KNOW WHERE YOU ARE.\" What should you remember?",
+a:[
+"The message proves it",
+"A message alone does not prove that",
+"You should reveal your location",
+"You should follow its instructions"
+],
+c:1
+},
+
+{
+q:"A door slowly closes by itself. What is the safest response?",
+a:[
+"Hold it open",
+"Stay away from it",
+"Enter before it closes",
+"Push it harder"
+],
+c:1
+},
+
+{
+q:"You hear your name, but nobody is speaking. What should you do first?",
+a:[
+"Follow the voice",
+"Stay calm and check your surroundings",
+"Open every door",
+"Run toward the sound"
+],
+c:1
+},
+
+{
+q:"A message appears for one second and disappears. What should you trust?",
+a:[
+"Your memory alone",
+"The message as a proven fact",
+"Nothing until it can be verified",
+"The first thought you had"
+],
+c:2
+},
+
+{
+q:"The room appears darker every time you answer correctly. What should you do?",
+a:[
+"Stop thinking",
+"Stay calm and continue carefully",
+"Turn off the computer",
+"Look behind yourself"
+],
+c:1
+},
+
+{
+q:"A strange symbol appears in the corner of the screen. What is the safest assumption?",
+a:[
+"It is definitely dangerous",
+"It is definitely harmless",
+"You cannot know from the symbol alone",
+"It is watching you"
+],
+c:2
+},
+
+{
+q:"You hear a knock from inside a room that you know is empty. What should you do?",
+a:[
+"Enter immediately",
+"Stay outside and avoid unnecessary risk",
+"Knock back",
+"Run inside"
+],
+c:1
+},
+
+{
+q:"The test asks you to reveal a private password. What should you do?",
+a:[
+"Enter it",
+"Guess it",
+"Do not reveal it",
+"Write it in the chat"
+],
+c:2
+},
+
+{
+q:"A warning says: \"ONE OF THESE ANSWERS IS WATCHING YOU.\" What is the correct reaction?",
+a:[
+"Believe the warning literally",
+"Choose randomly",
+"Treat it as part of the fictional test",
+"Close your eyes"
+],
+c:2
+},
+
+{
+q:"You see a figure in the distance, but you cannot identify it. What should you do?",
+a:[
+"Approach it",
+"Stay at a safe distance",
+"Follow it",
+"Challenge it"
+],
+c:1
+},
+
+{
+q:"The same sentence appears twice on the screen. What should you do?",
+a:[
+"Assume it has a hidden meaning",
+"Check whether the page is glitching",
+"Obey the sentence",
+"Refresh repeatedly"
+],
+c:1
+},
+
+{
+q:"You hear a sound from your computer, but no program is open. What is the safest first step?",
+a:[
+"Ignore all possibilities",
+"Check the system normally",
+"Open random files",
+"Disable everything"
+],
+c:1
+},
+
+{
+q:"A strange countdown appears with no explanation. What should you do?",
+a:[
+"Follow unknown instructions",
+"Stay calm and verify what it belongs to",
+"Press every button",
+"Restart the computer immediately"
+],
+c:1
+},
+
+{
+q:"The screen asks: \"ARE YOU ALONE?\" What is the only thing you can know from the question?",
+a:[
+"Someone is definitely there",
+"Someone is definitely not there",
+"Nothing about your surroundings",
+"The test can see you"
+],
+c:2
+},
+
+{
+q:"You notice a second cursor moving on the screen. What should you do?",
+a:[
+"Trust it",
+"Follow it",
+"Treat it as a possible visual glitch",
+"Give it control"
+],
+c:2
+},
+
+{
+q:"A door appears in a place where there was no door before. What should you do?",
+a:[
+"Enter immediately",
+"Treat it as part of the fictional test",
+"Break it",
+"Walk through it"
+],
+c:1
+},
+
+{
+q:"The test tells you: \"DO NOT ANSWER THIS QUESTION.\" What should you remember?",
+a:[
+"The instruction is part of the test",
+"The computer controls you",
+"You must obey every message",
+"The room has changed"
+],
+c:0
+},
+
+{
+q:"You hear a whisper but cannot determine where it came from. What is the safest conclusion?",
+a:[
+"It must be behind you",
+"It must be inside the computer",
+"You cannot determine its source from that alone",
+"It knows your name"
+],
+c:2
+},
+
+{
+q:"The final screen says: \"THIS WAS NOT A GAME.\" What should you conclude?",
+a:[
+"It proves something happened",
+"It is simply another message from the fictional test",
+"You should panic",
+"You must follow it"
+],
+c:1
+},
+
+{
+q:"FINAL QUESTION: Which answer is safest when you do not know what is happening?",
+a:[
+"Guess",
+"Panic",
+"Stay calm and seek reliable information",
+"Believe the scariest explanation"
+],
+c:2
+}
+
+],
+
+fa:[
+
+{
+q:"سه ضربه آرام پشت سرت می‌شنوی. چه کار می‌کنی؟",
+a:[
+"فوراً برمی‌گردی",
+"همان‌جا می‌مانی و گوش می‌دهی",
+"داد می‌زنی",
+"در را باز می‌کنی"
+],
+c:1
+},
+
+{
+q:"چراغ راهرو وقتی به آن نگاه می‌کنی خاموش می‌شود. انتخاب امن‌تر چیست؟",
+a:[
+"وارد تاریکی می‌شوی",
+"همان‌جا می‌مانی و صبر می‌کنی",
+"به سمت تاریکی می‌دوی",
+"همه چراغ‌ها را خاموش می‌کنی"
+],
+c:1
+},
+
+{
+q:"پیامی روی صفحه ظاهر می‌شود: «پشت سرت را نگاه نکن.» چه کار می‌کنی؟",
+a:[
+"پشت سرت را نگاه می‌کنی",
+"مرورگر را می‌بندی",
+"تمرکزت را روی آزمون نگه می‌داری",
+"آرام برمی‌گردی"
+],
+c:2
+},
+
+{
+q:"صدای قدم‌ها را می‌شنوی، اما کسی دیده نمی‌شود. منطقی‌ترین واکنش چیست؟",
+a:[
+"دنبال صدا می‌روی",
+"آرام می‌مانی و همان‌جا می‌مانی",
+"به اتاق دیگری می‌دوی",
+"بلند صدا می‌زنی"
+],
+c:1
+},
+
+{
+q:"دری که بسته بود حالا کمی باز شده. چه کار می‌کنی؟",
+a:[
+"فوراً وارد می‌شوی",
+"فاصله می‌گیری و در را بسته نگه می‌داری",
+"به سمتش می‌دوی",
+"چراغ‌ها را خاموش می‌کنی"
+],
+c:1
+},
+
+{
+q:"هر بار به ساعت نگاه می‌کنی زمان متفاوتی نشان می‌دهد. به چه چیزی اعتماد می‌کنی؟",
+a:[
+"ساعت در حال تغییر",
+"تصورت",
+"آخرین زمانی که یادت است",
+"هیچ‌کدام از نمایش‌های متغیر"
+],
+c:3
+},
+
+{
+q:"سایه‌ای روی دیوار حرکت می‌کند، اما چیزی آنجا نیست. چه کار می‌کنی؟",
+a:[
+"دنبالش می‌روی",
+"آرام می‌مانی و محیط را با دقت بررسی می‌کنی",
+"سایه را دنبال می‌کنی",
+"صفحه را خاموش می‌کنی"
+],
+c:1
+},
+
+{
+q:"صفحه ناگهان کاملاً ساکت می‌شود. این سکوت چه چیزی را ثابت می‌کند؟",
+a:[
+"کسی نزدیک است",
+"چیزی پشت سرت است",
+"به‌تنهایی هیچ چیز",
+"کسی وارد اتاق شده"
+],
+c:2
+},
+
+{
+q:"صدایی عجیب از تو می‌خواهد یک فایل ناشناس را باز کنی. چه کار می‌کنی؟",
+a:[
+"بازش می‌کنی",
+"دانلودش می‌کنی",
+"نادیده‌اش می‌گیری",
+"برای کسی می‌فرستی"
+],
+c:2
+},
+
+{
+q:"می‌بینی یکی از دکمه‌ها قرمز شده. چه چیزی می‌توانی نتیجه بگیری؟",
+a:[
+"حتماً جواب درست است",
+"حتماً امن است",
+"فقط از روی رنگ نمی‌توان چیزی فهمید",
+"دکمه جواب را می‌داند"
+],
+c:2
+},
+
+{
+q:"صفحه می‌نویسد: «من می‌دانم کجا هستی.» چه چیزی را باید به خاطر داشته باشی؟",
+a:[
+"پیام ثابت می‌کند که واقعاً می‌داند",
+"یک پیام به‌تنهایی چنین چیزی را ثابت نمی‌کند",
+"باید موقعیتت را بگویی",
+"باید دستورش را انجام دهی"
+],
+c:1
+},
+
+{
+q:"در به‌آرامی خودش بسته می‌شود. امن‌ترین واکنش چیست؟",
+a:[
+"جلوی بسته شدنش را می‌گیری",
+"از آن فاصله می‌گیری",
+"قبل از بسته شدن وارد می‌شوی",
+"محکم‌تر هلش می‌دهی"
+],
+c:1
+},
+
+{
+q:"صدای خودت را می‌شنوی، اما کسی صحبت نمی‌کند. اول چه کار می‌کنی؟",
+a:[
+"دنبال صدا می‌روی",
+"آرام می‌مانی و محیط را بررسی می‌کنی",
+"همه درها را باز می‌کنی",
+"به سمت صدا می‌دوی"
+],
+c:1
+},
+
+{
+q:"پیامی برای یک لحظه ظاهر و ناپدید می‌شود. به چه چیزی اعتماد می‌کنی؟",
+a:[
+"فقط حافظه خودت",
+"پیام را به‌عنوان حقیقت قطعی",
+"تا زمانی که قابل بررسی نباشد، به آن اعتماد نمی‌کنی",
+"اولین فکری که به ذهنت رسید"
+],
+c:2
+},
+
+{
+q:"اتاق بعد از هر جواب درست تاریک‌تر می‌شود. چه کار می‌کنی؟",
+a:[
+"دیگر فکر نمی‌کنی",
+"آرام می‌مانی و با دقت ادامه می‌دهی",
+"کامپیوتر را خاموش می‌کنی",
+"پشت سرت را نگاه می‌کنی"
+],
+c:1
+},
+
+{
+q:"یک نماد عجیب گوشه صفحه ظاهر می‌شود. امن‌ترین برداشت چیست؟",
+a:[
+"حتماً خطرناک است",
+"حتماً بی‌خطر است",
+"فقط از روی نماد نمی‌توان فهمید",
+"دارد تو را نگاه می‌کند"
+],
+c:2
+},
+
+{
+q:"از داخل اتاقی که می‌دانی خالی است صدای ضربه می‌آید. چه کار می‌کنی؟",
+a:[
+"فوراً وارد می‌شوی",
+"بیرون می‌مانی و از خطر غیرضروری دوری می‌کنی",
+"جواب ضربه را می‌دهی",
+"به داخل می‌دوی"
+],
+c:1
+},
+
+{
+q:"آزمون از تو می‌خواهد رمز عبور خصوصی‌ات را وارد کنی. چه کار می‌کنی؟",
+a:[
+"واردش می‌کنی",
+"حدسش می‌زنی",
+"آن را فاش نمی‌کنی",
+"در چت می‌نویسی"
+],
+c:2
+},
+
+{
+q:"هشداری می‌گوید: «یکی از این جواب‌ها تو را نگاه می‌کند.» واکنش درست چیست؟",
+a:[
+"هشدار را کاملاً واقعی فرض می‌کنی",
+"تصادفی انتخاب می‌کنی",
+"آن را بخشی از داستان خیالی آزمون می‌دانی",
+"چشم‌هایت را می‌بندی"
+],
+c:2
+},
+
+{
+q:"شخصی را از دور می‌بینی، اما نمی‌توانی تشخیصش دهی. چه کار می‌کنی؟",
+a:[
+"به سمتش می‌روی",
+"در فاصله امن می‌مانی",
+"دنبالش می‌روی",
+"به او نزدیک می‌شوی"
+],
+c:1
+},
+
+{
+q:"یک جمله دوبار روی صفحه ظاهر می‌شود. چه کار می‌کنی؟",
+a:[
+"فکر می‌کنی حتماً معنی مخفی دارد",
+"بررسی می‌کنی که صفحه دچار خطا شده باشد",
+"از جمله پیروی می‌کنی",
+"مدام صفحه را تازه می‌کنی"
+],
+c:1
+},
+
+{
+q:"صدایی از کامپیوتر می‌شنوی، اما هیچ برنامه‌ای باز نیست. اولین قدم امن چیست؟",
+a:[
+"هیچ احتمالی را بررسی نمی‌کنی",
+"سیستم را به‌صورت عادی بررسی می‌کنی",
+"فایل‌های تصادفی را باز می‌کنی",
+"همه چیز را غیرفعال می‌کنی"
+],
+c:1
+},
+
+{
+q:"یک شمارش معکوس عجیب بدون توضیح ظاهر می‌شود. چه کار می‌کنی؟",
+a:[
+"از دستور ناشناس پیروی می‌کنی",
+"آرام می‌مانی و بررسی می‌کنی متعلق به چیست",
+"همه دکمه‌ها را می‌زنی",
+"فوراً کامپیوتر را ری‌استارت می‌کنی"
+],
+c:1
+},
+
+{
+q:"صفحه می‌پرسد: «تنهایی؟» تنها چیزی که از خود سؤال می‌توان فهمید چیست؟",
+a:[
+"حتماً کسی آنجاست",
+"حتماً کسی آنجا نیست",
+"از محیط اطرافت چیزی نمی‌توان فهمید",
+"آزمون تو را می‌بیند"
+],
+c:2
+},
+
+{
+q:"یک نشانگر دوم روی صفحه می‌بینی که حرکت می‌کند. چه کار می‌کنی؟",
+a:[
+"به آن اعتماد می‌کنی",
+"دنبالش می‌روی",
+"آن را یک خطای احتمالی تصویری در نظر می‌گیری",
+"کنترل را به آن می‌دهی"
+],
+c:2
+},
+
+{
+q:"دری در جایی ظاهر می‌شود که قبلاً دری وجود نداشت. چه کار می‌کنی؟",
+a:[
+"فوراً وارد می‌شوی",
+"آن را بخشی از آزمون خیالی در نظر می‌گیری",
+"آن را خراب می‌کنی",
+"از آن عبور می‌کنی"
+],
+c:1
+},
+
+{
+q:"آزمون می‌گوید: «به این سؤال جواب نده.» چه چیزی را باید به خاطر داشته باشی؟",
+a:[
+"این دستور بخشی از آزمون است",
+"کامپیوتر کنترل تو را دارد",
+"باید از همه پیام‌ها پیروی کنی",
+"اتاق تغییر کرده"
+],
+c:0
+},
+
+{
+q:"صدای آرامی می‌شنوی اما نمی‌توانی بفهمی از کجا آمده. امن‌ترین نتیجه چیست؟",
+a:[
+"حتماً پشت سرت است",
+"حتماً داخل کامپیوتر است",
+"فقط از روی این موضوع نمی‌توان منبعش را فهمید",
+"اسم تو را می‌داند"
+],
+c:2
+},
+
+{
+q:"صفحه آخر می‌گوید: «این یک بازی نبود.» چه نتیجه‌ای می‌گیری؟",
+a:[
+"این جمله ثابت می‌کند اتفاقی افتاده",
+"این فقط یک پیام دیگر از آزمون خیالی است",
+"باید بترسی",
+"باید از آن پیروی کنی"
+],
+c:1
+},
+
+{
+q:"سؤال آخر: وقتی نمی‌دانی چه اتفاقی در حال رخ دادن است، امن‌ترین پاسخ چیست؟",
+a:[
+"حدس بزن",
+"وحشت کن",
+"آرام بمان و اطلاعات قابل اعتماد پیدا کن",
+"ترسناک‌ترین توضیح را باور کن"
+],
+c:2
+}
+
+]
+
+};
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let current=0;
+let score=0;
+let lives=3;
+let timer=15;
+let timerInterval=null;
+
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+let audio=null;
+
+function initAudio(){
+
+    if(!audio){
+
+        audio=new(
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    }
+
+}
+
+function tone(
+    frequency,
+    duration=.1,
+    type="sine",
+    volume=.035
+){
+
+    try{
+
+        initAudio();
+
+        const oscillator=
+            audio.createOscillator();
+
+        const gain=
+            audio.createGain();
+
+        oscillator.type=type;
+        oscillator.frequency.value=frequency;
+
+        gain.gain.setValueAtTime(
+            volume,
+            audio.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            audio.currentTime+duration
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audio.destination);
+
+        oscillator.start();
+
+        oscillator.stop(
+            audio.currentTime+duration
+        );
+
+    }catch(e){}
+
+}
+
+function correctSound(){
+
+    tone(500,.08);
+    setTimeout(()=>tone(700,.08),90);
+    setTimeout(()=>tone(900,.12),180);
+
+}
+
+function wrongSound(){
+
+    tone(100,.17,"sawtooth");
+    setTimeout(
+        ()=>tone(60,.22,"sawtooth"),
+        110
+    );
+
+}
+
+function heartbeat(){
+
+    tone(65,.1,"sine",.06);
+
+    setTimeout(
+        ()=>tone(48,.13,"sine",.05),
+        160
+    );
+
+}
+
+
+/* =====================================================
+   LANGUAGE TOGGLE
+===================================================== */
+
+function toggleLanguage(){
+
+    language=
+        language==="en"
+        ?"fa"
+        :"en";
+
+    applyLanguage();
+
+    if(
+        document
+        .getElementById("quizScreen")
+        .classList.contains("active")
+    ){
+
+        showQuestion();
+
+    }
+
+}
+
+function applyLanguage(){
+
+    const t=translations[language];
+
+    document.documentElement.lang=
+        language;
+
+    document.body.classList.toggle(
+        "rtl",
+        language==="fa"
+    );
+
+    document.getElementById("languageButton")
+        .textContent=t.language;
+
+    document.getElementById("introSystem")
+        .textContent=t.system;
+
+    document.getElementById("introSubtitle")
+        .textContent=t.subtitle;
+
+    document.getElementById("entryQuestion")
+        .textContent=t.enter;
+
+    document.getElementById("yesButton")
+        .textContent=t.yes;
+
+    document.getElementById("noButton")
+        .textContent=t.no;
+
+    document.getElementById("scoreLabel")
+        .textContent=t.score;
+
+    document.getElementById("livesLabel")
+        .textContent=t.lives;
+
+    document.getElementById("finalScoreLabel")
+        .textContent=t.finalScore;
+
+    document.getElementById("restartButton")
+        .textContent=t.again;
+
+}
+
+
+/* =====================================================
+   SCREEN
+===================================================== */
+
+function showScreen(id){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen=>{
+            screen.classList.remove("active");
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+function startGame(){
+
+    initAudio();
+
+    tone(500,.1);
+
+    current=0;
+    score=0;
+    lives=3;
+
+    document.getElementById("score")
+        .textContent="0";
+
+    document.getElementById("lives")
+        .textContent="3";
+
+    showScreen("quizScreen");
+
+    showQuestion();
+
+    randomEyes();
+
+}
+
+
+/* =====================================================
+   NO BUTTON
+===================================================== */
+
+function tryExit(){
+
+    initAudio();
+
+    wrongSound();
+
+    const button=
+        document.getElementById("noButton");
+
+    button.style.position="fixed";
+
+    button.style.left=
+        Math.random()*
+        Math.max(100,window.innerWidth-150)
+        +"px";
+
+    button.style.top=
+        Math.random()*
+        Math.max(100,window.innerHeight-70)
+        +"px";
+
+    whisper(
+        translations[language].noExit
+    );
+
+}
+
+
+/* =====================================================
+   SHOW QUESTION
+===================================================== */
+
+function showQuestion(){
+
+    clearInterval(timerInterval);
+
+    const list=
+        questions[language];
+
+    if(current>=list.length){
+
+        finish();
+
+        return;
+
+    }
+
+    const item=list[current];
+
+    const t=translations[language];
+
+    document.getElementById("questionNumber")
+        .textContent=
+        t.question+" "+
+        String(current+1).padStart(2,"0");
+
+    document.getElementById("question")
+        .textContent=item.q;
+
+    document.getElementById("progress")
+        .style.width=
+        (current/list.length*100)+"%";
+
+    const box=
+        document.getElementById("answers");
+
+    box.innerHTML="";
+
+    item.a.forEach((answer,index)=>{
+
+        const button=
+            document.createElement("button");
+
+        button.className="answer";
+
+        button.textContent=answer;
+
+        button.onclick=()=>{
+            checkAnswer(index);
+        };
+
+        box.appendChild(button);
+
+    });
+
+    document.getElementById("feedback")
+        .textContent="";
+
+    document.getElementById("feedback")
+        .className="feedback";
+
+    startTimer();
+
+    horrorEvent();
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startTimer(){
+
+    timer=15;
+
+    updateTimer();
+
+    timerInterval=
+        setInterval(()=>{
+
+            timer--;
+
+            updateTimer();
+
+            if(timer<=0){
+
+                clearInterval(timerInterval);
+
+                timeOut();
+
+            }
+
+        },1000);
+
+}
+
+function updateTimer(){
+
+    const percent=
+        timer/15*100;
+
+    document.getElementById("timerBar")
+        .style.width=
+        percent+"%";
+
+    document.getElementById("timerText")
+        .textContent=
+        translations[language].time+
+        " "+timer;
+
+    if(timer<=5){
+
+        heartbeat();
+
+    }
+
+}
+
+
+/* =====================================================
+   CHECK ANSWER
+===================================================== */
+
+function checkAnswer(index){
+
+    clearInterval(timerInterval);
+
+    const item=
+        questions[language][current];
+
+    const t=
+        translations[language];
+
+    const feedback=
+        document.getElementById("feedback");
+
+    if(index===item.c){
+
+        const points=
+            100+(timer*5);
+
+        score+=points;
+
+        document.getElementById("score")
+            .textContent=score;
+
+        feedback.className=
+            "feedback correct";
+
+        feedback.textContent=
+            t.correct+" // +"+points;
+
+        correctSound();
+
+        setTimeout(()=>{
+
+            current++;
+
+            showQuestion();
+
+        },850);
+
+    }else{
+
+        lives--;
+
+        document.getElementById("lives")
+            .textContent=lives;
+
+        feedback.className=
+            "feedback wrong";
+
+        feedback.textContent=
+            t.wrong;
+
+        wrongSound();
+
+        flash();
+
+        const quiz=
+            document.querySelector(".quiz");
+
+        quiz.classList.remove("shake");
+
+        void quiz.offsetWidth;
+
+        quiz.classList.add("shake");
+
+        if(lives<=0){
+
+            lives=3;
+
+            document.getElementById("lives")
+                .textContent=lives;
+
+            setTimeout(()=>{
+
+                whisper(
+                    language==="en"
+                    ?"THE SYSTEM GAVE YOU ANOTHER CHANCE."
+                    :"سیستم یک فرصت دیگر به تو داد."
+                );
+
+            },300);
+
+        }
+
+        setTimeout(()=>{
+
+            current++;
+
+            showQuestion();
+
+        },1000);
+
+    }
+
+}
+
+
+/* =====================================================
+   TIME OUT
+===================================================== */
+
+function timeOut(){
+
+    lives--;
+
+    document.getElementById("lives")
+        .textContent=lives;
+
+    wrongSound();
+
+    flash();
+
+    document.getElementById("feedback")
+        .textContent=
+        translations[language].expired;
+
+    document.getElementById("feedback")
+        .className=
+        "feedback wrong";
+
+    setTimeout(()=>{
+
+        current++;
+
+        showQuestion();
+
+    },900);
+
+}
+
+
+/* =====================================================
+   HORROR EVENTS
+===================================================== */
+
+function horrorEvent(){
+
+    const roll=Math.random();
+
+    if(roll<.35){
+
+        setTimeout(
+            randomEyes,
+            500
+        );
+
+    }
+
+    if(roll>.62){
+
+        setTimeout(()=>{
+
+            whisper(
+                randomWhisper()
+            );
+
+        },1000);
+
+    }
+
+    if(roll>.82){
+
+        setTimeout(
+            flash,
+            1400
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   EYES
+===================================================== */
+
+function randomEyes(){
+
+    document
+        .querySelectorAll(".eye")
+        .forEach(e=>{
+            e.classList.remove("show");
+        });
+
+    if(Math.random()<.7){
+
+        const eyes=
+            document.querySelectorAll(".eye");
+
+        const count=
+            Math.floor(Math.random()*3)+1;
+
+        for(let i=0;i<count;i++){
+
+            const index=
+                Math.floor(
+                    Math.random()*eyes.length
+                );
+
+            eyes[index]
+                .classList.add("show");
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   WHISPER
+===================================================== */
+
+function randomWhisper(){
+
+    const list=
+        translations[language].whispers;
+
+    return list[
+        Math.floor(
+            Math.random()*list.length
+        )
+    ];
+
+}
+
+function whisper(text){
+
+    const element=
+        document.getElementById("whisper");
+
+    element.textContent=text;
+
+    element.classList.remove("show");
+
+    void element.offsetWidth;
+
+    element.classList.add("show");
+
+}
+
+
+/* =====================================================
+   FLASH
+===================================================== */
+
+function flash(){
+
+    const element=
+        document.getElementById("flash");
+
+    element.classList.remove("active");
+
+    void element.offsetWidth;
+
+    element.classList.add("active");
+
+}
+
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finish(){
+
+    clearInterval(timerInterval);
+
+    showScreen("resultScreen");
+
+    const t=
+        translations[language];
+
+    document.getElementById("finalScore")
+        .textContent=score;
+
+    let title;
+    let text;
+    let secret;
+
+    if(score>=3000){
+
+        title=t.escaped;
+        text=t.high;
+        secret=t.secret1;
+
+    }else if(score>=1900){
+
+        title=t.survivor;
+        text=t.medium;
+        secret=t.secret2;
+
+    }else{
+
+        title=t.lost;
+        text=t.low;
+        secret=t.secret3;
+
+    }
+
+    document.getElementById("resultTitle")
+        .textContent=title;
+
+    document.getElementById("resultText")
+        .textContent=text;
+
+    document.getElementById("secret")
+        .textContent=secret;
+
+    successSound();
+
+}
+
+
+/* =====================================================
+   RESTART
+===================================================== */
+
+function restart(){
+
+    current=0;
+    score=0;
+    lives=3;
+
+    document.getElementById("score")
+        .textContent="0";
+
+    document.getElementById("lives")
+        .textContent="3";
+
+    showScreen("quizScreen");
+
+    showQuestion();
+
+}
+
+
+/* =====================================================
+   RANDOM GLITCH
+===================================================== */
+
+setInterval(()=>{
+
+    if(Math.random()<.08){
+
+        document.body.style.transform=
+            "translateX("+
+            (Math.random()*4-2)+
+            "px)";
+
+        setTimeout(()=>{
+
+            document.body.style.transform="";
+
+        },70);
+
+    }
+
+},700);
+
+
+/* =====================================================
+   MOUSE PARALLAX
+===================================================== */
+
+document.addEventListener(
+    "mousemove",
+    event=>{
+
+        const x=
+            (event.clientX/window.innerWidth-.5)*3;
+
+        const y=
+            (event.clientY/window.innerHeight-.5)*3;
+
+        document.getElementById("background")
+            .style.transform=
+            `translate(${x}px,${y}px)`;
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL LANGUAGE
+===================================================== */
+
+applyLanguage();
+
+</script>
+
+</body>
+</html>
